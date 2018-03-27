@@ -50,4 +50,9 @@ jobs:
 
       - store_artifacts:
           path: app/tests/report
+
+      - run:
+        name: Build Docker image
+        command: |
+          docker build . -t gcr.io/groupscrawler/crawler
           
