@@ -49,6 +49,6 @@ jobs:
             pytest app/tests/*.py --html=app/tests/report/report.html
 
       - store_artifacts:
-          path: app/test/report
-          destination: app/test/report
+          path: app/tests/report
+          destination: app/tests/report
           
