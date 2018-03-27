@@ -2,3 +2,4 @@ uwsgi
 flask
 apscheduler
 pytest
+pytest-html
