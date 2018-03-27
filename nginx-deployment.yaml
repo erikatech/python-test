@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    stack: crawler
+  name: crawler
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: crawler
+        app: crawler
+        stack: crawler
+    spec:
+      containers:
+      - image: gcr.io/groupscrawler/crawler:latest
+        name: crawler
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
+status: {}
