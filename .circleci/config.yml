@@ -59,9 +59,9 @@ jobs:
       #       docker build . -t gcr.io/groupscrawler/crawler
 
       - run:
-        name: coisa
-        command: |
-          sudo apt-get update && sudo apt-get install google-cloud-sdk
+          name: coisa
+          command: |
+            sudo apt-get update && sudo apt-get install google-cloud-sdk
           
       - run:
           name: test gcloud
