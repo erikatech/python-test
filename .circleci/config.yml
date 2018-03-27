@@ -58,3 +58,7 @@ jobs:
           command: |
             docker build . -t gcr.io/groupscrawler/crawler
           
+      - run:
+          name: test gcloud
+          command: |
+            gcloud config set project groupscrawler
