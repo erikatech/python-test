@@ -51,6 +51,8 @@ jobs:
       - store_artifacts:
           path: app/tests/report
 
+      - setup_remote_docker
+      
       - run:
         name: Build Docker image
         command: |
