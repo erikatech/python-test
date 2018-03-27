@@ -50,5 +50,4 @@ jobs:
 
       - store_artifacts:
           path: app/tests/report
-          destination: app/tests/report
           
