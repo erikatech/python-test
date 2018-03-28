@@ -53,10 +53,10 @@ jobs:
 
       - setup_remote_docker
 
-      # - run:
-      #     name: Build Docker image
-      #     command: |
-      #       docker build . -t gcr.io/groupscrawler/crawler
+      - run:
+          name: Build Docker image
+          command: |
+            docker build . -t gcr.io/groupscrawler/crawler
 
       - run:
           name: Intall Gcloud
@@ -81,7 +81,6 @@ jobs:
       - run:
           name: Configure Gcloud
           command: |
-            gcloud --quiet components update
             gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
