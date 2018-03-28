@@ -51,9 +51,6 @@ jobs:
             docker build . -t gcr.io/groupscrawler/crawler
 
   deploy:
-    branches:
-      only:
-        - master
     docker:
       - image: circleci/python:3.6.4
 
