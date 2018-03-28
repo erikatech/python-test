@@ -99,7 +99,7 @@ workflows:
               only:
                 - master
           requires:
-            - build
+            - tests
       - deploy:
           requires:
             - build
