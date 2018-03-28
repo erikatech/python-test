@@ -100,8 +100,6 @@ workflows:
     jobs:
       - tests
       - build:
-          requires:
-            - tests
       - deploy:
           requires:
             - build
