@@ -34,9 +34,6 @@ jobs:
           path: app/tests/report
 
   build:
-    branches:
-      only:
-        - master
     docker:
       - image: circleci/python:3.6.4
 
@@ -96,7 +93,13 @@ workflows:
   build_and_test:
     jobs:
       - tests
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
       - deploy:
           requires:
             - build
