@@ -61,6 +61,7 @@ jobs:
       - run:
           name: coisa
           command: |
+            sudo apt-get install lsb-release
             # Create an environment variable for the correct distribution
             export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" 
             # Add the Cloud SDK distribution URI as a package source
