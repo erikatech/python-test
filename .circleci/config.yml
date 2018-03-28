@@ -4,25 +4,17 @@
 #
 version: 2
 jobs:
-  build:
+
+  tests:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.4
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
 
     steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "app/requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
       - run:
@@ -46,21 +38,22 @@ jobs:
       - store_artifacts:
           path: app/tests/report
 
+  build:
+    docker:
+      - image: circleci/python:3.6.4
+
+    steps:
+      - checkout
+
       - setup_remote_docker
 
       - run:
           name: Build Docker image
-          filters:
-            branches:
-              only: master
           command: |
             docker build . -t gcr.io/groupscrawler/crawler
 
       - run:
           name: Intall Gcloud
-          filters:
-            branches:
-              only: master
           command: |
             sudo apt-get install lsb-release
             export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" 
@@ -72,16 +65,10 @@ jobs:
 
       - run:
           name: Decode and Store Service Account
-          filters:
-            branches:
-              only: master
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
 
       - run:
           name: Configure Gcloud
-          filters:
-            branches:
-              only: master
           command: |
             gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
@@ -90,17 +77,11 @@ jobs:
 
       - run:
           name: Upload image to gloud registry
-          filters:
-            branches:
-              only: master
           command: |
             gcloud docker -- push gcr.io/groupscrawler/crawler:latest
 
       - run:
           name: Deploy
-          filters:
-            branches:
-              only: master
           command: |
             kubectl delete -f nginx-deployment.yaml -f nginx-service.yaml
             kubectl apply -f nginx-deployment.yaml -f nginx-service.yaml
