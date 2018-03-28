@@ -99,7 +99,7 @@ workflows:
   build_and_test:
     jobs:
       - tests
-      - build:
+      - build
       - deploy:
           requires:
             - build
