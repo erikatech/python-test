@@ -72,9 +72,9 @@ jobs:
             # sudo apt-get update && sudo apt-get install google-cloud-sdk
             # sudo apt-get update
             # sudo apt-get update && sudo apt-get --only-upgrade install kubectl google-cloud-sdk google-cloud-sdk-app-engine-grpc google-cloud-sdk-pubsub-emulator google-cloud-sdk-app-engine-go google-cloud-sdk-datastore-emulator google-cloud-sdk-app-engine-python google-cloud-sdk-cbt google-cloud-sdk-bigtable-emulator google-cloud-sdk-app-engine-python-extras google-cloud-sdk-datalab google-cloud-sdk-app-engine-java
-            curl https://sdk.cloud.google.com | bash
-            exec -l $SHELL
-            gcloud init
+            curl https://sdk.cloud.google.com | bash --disable-prompts
+            exec -l $SHELL --disable-prompts
+            gcloud init --disable-prompts
 
       - run:
           name: Decode and Store Service Account
