@@ -1,10 +1,5 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
-
   tests:
     docker:
       - image: circleci/python:3.6.4
@@ -39,6 +34,9 @@ jobs:
           path: app/tests/report
 
   build:
+    branches:
+      only:
+        - master
     docker:
       - image: circleci/python:3.6.4
 
@@ -53,56 +51,57 @@ jobs:
             docker build . -t gcr.io/groupscrawler/crawler
 
   deploy:
-      docker:
-        - image: circleci/python:3.6.4
+    branches:
+      only:
+        - master
+    docker:
+      - image: circleci/python:3.6.4
 
-      steps:
-        - checkout
+    steps:
+      - checkout
 
-        - run:
-            name: Intall Gcloud
-            command: |
-              sudo apt-get install lsb-release
-              export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" 
-              echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-              curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      - run:
+          name: Intall Gcloud
+          command: |
+            sudo apt-get install lsb-release
+            export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" 
+            echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
-              sudo apt-get update
-              sudo apt-get install -y kubectl google-cloud-sdk
+            sudo apt-get update
+            sudo apt-get install -y kubectl google-cloud-sdk
 
-        - run:
-            name: Decode and Store Service Account
-            command: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+      - run:
+          name: Decode and Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
 
-        - run:
-            name: Configure Gcloud
-            command: |
-              gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-              gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-              gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-              gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+      - run:
+          name: Configure Gcloud
+          command: |
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
 
-        - run:
-            name: Upload image to gloud registry
-            command: |
-              gcloud docker -- push gcr.io/groupscrawler/crawler:latest
+      - run:
+          name: Upload image to gloud registry
+          command: |
+            gcloud docker -- push gcr.io/groupscrawler/crawler:latest
 
-        - run:
-            name: Deploy
-            command: |
-              kubectl delete -f nginx-deployment.yaml -f nginx-service.yaml
-              kubectl apply -f nginx-deployment.yaml -f nginx-service.yaml
+      - run:
+          name: Deploy
+          command: |
+            kubectl delete -f nginx-deployment.yaml -f nginx-service.yaml
+            kubectl apply -f nginx-deployment.yaml -f nginx-service.yaml
 
 workflows:
   version: 2
-  build_and_test: # name of your workflow
+  build_and_test:
     jobs:
       - tests
       - build:
           requires:
-            - tests # wait for build1 job to complete successfully before starting
-            # see circleci.com/docs/2.0/workflows/ for more examples.
+            - tests
       - deploy:
           requires:
-            - build # wait for build1 job to complete successfully before starting
-            # run build2 and build3 in parallel to save time.
+            - build
