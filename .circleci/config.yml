@@ -99,10 +99,10 @@ workflows:
     jobs:
       - tests
       - build:
-        requires:
-           - tests # wait for build1 job to complete successfully before starting
-           # see circleci.com/docs/2.0/workflows/ for more examples.
+          requires:
+            - tests # wait for build1 job to complete successfully before starting
+            # see circleci.com/docs/2.0/workflows/ for more examples.
       - deploy:
-        requires:
-           - build # wait for build1 job to complete successfully before starting
-           # run build2 and build3 in parallel to save time.
+          requires:
+            - build # wait for build1 job to complete successfully before starting
+            # run build2 and build3 in parallel to save time.
