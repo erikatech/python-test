@@ -33,7 +33,7 @@ jobs:
       - store_artifacts:
           path: app/tests/report
 
-  build:
+  deploy:
     docker:
       - image: circleci/python:3.6.4
 
@@ -46,15 +46,6 @@ jobs:
           name: Build Docker image
           command: |
             docker build . -t gcr.io/groupscrawler/crawler
-
-  deploy:
-    docker:
-      - image: circleci/python:3.6.4
-
-    steps:
-      - checkout
-
-      - setup_remote_docker
 
       - run:
           name: Intall Gcloud
@@ -95,17 +86,10 @@ workflows:
   build_and_test:
     jobs:
       - tests
-      - build:
+      - deploy:
           filters:
             branches:
               only:
                 - master
           requires:
             - tests
-      - deploy:
-          requires:
-            - build
-
-
-
-            
